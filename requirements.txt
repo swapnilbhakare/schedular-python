@@ -1,0 +1,6 @@
+requests
+fastapi[standard]
+schedule
+pyodbc
+python-dateutil==2.9.0.post0
+azure.communication.email
