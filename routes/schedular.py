@@ -172,21 +172,21 @@ def scheduledDataJobs(report_info):
     
     if scheduled_datetime > current_time_utc:
         if report_info['once']:
-            schedule.every().day.at(formatted_time).do(job_that_executes_once, Link,reportType).tag(report_info['id'], 'once')
+            schedule.every().day.at(formatted_time).do(job_that_executes_once, report_info).tag(report_info['id'], 'once')
         elif report_info['once_daily']:
-            schedule.every().day.at(formatted_time).until(end_date_obj).do(send_report_email, Link,reportType).tag(report_info['id'], 'once_daily')
+            schedule.every().day.at(formatted_time).until(end_date_obj).do(send_report_email, report_info).tag(report_info['id'], 'once_daily')
         elif report_info['once_weekly']:
-            schedule.every().monday.until(end_date_obj).at(formatted_time).do(send_report_email, Link,reportType).tag(report_info['id'], 'once-weekly')
+            schedule.every().monday.until(end_date_obj).at(formatted_time).do(send_report_email, report_info).tag(report_info['id'], 'once-weekly')
         elif report_info['once_monthly']:
-            schedule.every(31).day.until(end_date_obj).at(formatted_time).do(send_report_email, Link,reportType).tag(report_info['id'], 'once-monthly')
+            schedule.every(31).day.until(end_date_obj).at(formatted_time).do(send_report_email, report_info).tag(report_info['id'], 'once-monthly')
         elif report_info.get('once_every'):
-            schedule.every(report_info['once_every']).days.until(end_date_obj).at(formatted_time).do(send_report_email, Link,reportType).tag(report_info['id'], 'once-every')
+            schedule.every(report_info['once_every']).days.until(end_date_obj).at(formatted_time).do(send_report_email, report_info).tag(report_info['id'], 'once-every')
 
 
-def job_that_executes_once(Link,reportType):
+def job_that_executes_once(report_info):
     # add your function Link,reportType
     
-    # send_report_email(report_info)
+    send_report_email(report_info)
     return schedule.CancelJob
 
 

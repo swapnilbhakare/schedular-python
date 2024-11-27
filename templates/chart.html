@@ -3,121 +3,120 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard with ECharts</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
     <style>
-        /* Basic styling for the statistics boxes */
-        .stats-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
+        .chart-container {
+            width: 100%;
+            height: 300px;
         }
 
-        .stat-box {
-            background-color: #f5f5f5;
-            padding: 20px;
+        .card {
+            background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 18%;
-        }
-
-        .stat-box h2 {
-            margin: 0;
-            font-size: 24px;
-            color: #333;
-        }
-
-        .stat-box p {
-            margin: 5px 0 0;
-            font-size: 16px;
-            color: #666;
-        }
-
-        /* Containers for the charts */
-        #chart1,
-        #chart2 {
-            width: 600px;
-            height: 400px;
-            margin-top: 20px;
+            padding: 16px;
         }
     </style>
 </head>
 
-<body>
-    <h1>Dynamic Dashboard with ECharts</h1>
+<body class="bg-teal-700 min-h-screen text-white">
 
-    <!-- Containers for the statistics boxes -->
-    <div class="stats-container">
-        {% for key, value in data.final_clean_card.items() %}
-        <div class="stat-box">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center mb-8">Dynamic Dashboard with ECharts</h1>
 
-            <p>{{ key.replace('_', ' ').title() }}</p>
-            <h2>{{ value }}</h2>
+        <!-- Statistic Boxes -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+            {% for key, value in data.final_clean_card.items() %}
+            <div class="bg-white text-teal-700 rounded-lg shadow-lg p-4 text-center">
+                <h2 class="text-xl font-semibold">{{ key.replace('_', ' ').title() }}</h2>
+                <p class="text-lg font-medium">{{ value }}</p>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
+        <!-- Chart Containers in Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for index in range(5) %}
+            <div class="card">
+                <h2 class="text-xl font-semibold text-teal-600 mb-4">{{ data.plot_recommendation.plot[index].title }}
+                </h2>
+                <div id="chart{{ index + 1 }}" class="chart-container"></div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
-    <!-- Containers for the charts -->
-    <div id="chart1"></div>
-    <div id="chart2"></div>
-
     <script>
-        // Use the 'data' passed from the backend without redeclaring it
         const chartData = {{ data | tojson | safe }};
-        console.log(chartData);  // Debugging step to check the format
+        const recommendations = chartData.plot_recommendation.plot;
+        console.log(chartData)
+        function createChart(chartId, plotConfig) {
+            const chart = echarts.init(document.getElementById(chartId));
 
-        // Chart 1: Bar Chart for Revenue
-        var chart1 = echarts.init(document.getElementById('chart1'));
-        var option1 = {
-            title: {
-                text: 'Revenue over Time'
-            },
-            tooltip: {},
-            xAxis: {
-                type: 'category',
-                data: chartData.labels // Using chartData passed from backend
-            },
-            yAxis: {
-                type: 'value'
-            },
-            series: [{
-                name: 'Revenue',
-                type: 'bar',
-                data: chartData.revenue, // Using chartData passed from backend
-                itemStyle: {
-                    color: 'rgba(75, 192, 192, 0.8)'
-                }
-            }]
-        };
-        chart1.setOption(option1);
+            // Get data arrays
+            const xData = chartData.data.map(item => item[plotConfig.xKey]);
+            const yData = chartData.data.map(item => item[plotConfig.yKey]);
+            console.log(xData)
+            // Create an array of objects to sort by yData values
+            const combinedData = xData.map((x, index) => ({ x, y: yData[index] }));
 
-        // Chart 2: Line Chart for Sales Distribution
-        var chart2 = echarts.init(document.getElementById('chart2'));
-        var option2 = {
-            title: {
-                text: 'Sales Distribution'
-            },
-            tooltip: {},
-            xAxis: {
-                type: 'category',
-                data: chartData.salesLabels // Using chartData passed from backend
-            },
-            yAxis: {
-                type: 'value'
-            },
-            series: [{
-                name: 'Sales',
-                type: 'line',
-                data: chartData.salesData, // Using chartData passed from backend
-                itemStyle: {
-                    color: 'rgba(153, 102, 255, 0.8)'
-                }
-            }]
-        };
-        chart2.setOption(option2);
+            // Sort by y values in descending order and take the top 5
+            const topData = combinedData.sort((a, b) => b.y - a.y).slice(0, 5);
+
+            // Extract sorted x and y arrays for the chart
+            const topXData = topData.map(item => item.x);
+            const topYData = topData.map(item => item.y);
+
+            const option = {
+                title: { text: plotConfig.title, textStyle: { color: '#333', fontSize: 16 } },
+                tooltip: { trigger: 'axis' },
+                xAxis: {
+                    type: 'category',
+                    data: topXData,  // Use the sorted top X data
+                    axisLabel: { color: '#555' },
+                    axisLine: { lineStyle: { color: '#ccc' } }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: { color: '#555' },
+                    axisLine: { lineStyle: { color: '#ccc' } }
+                },
+                series: [{
+                    name: plotConfig.title,
+                    type: plotConfig.chartTypes[0],
+                    data: topYData,  // Use the sorted top Y data
+                    itemStyle: { color: 'rgba(75, 192, 192, 0.8)' }
+                }]
+            };
+
+            chart.setOption(option);
+        }
+
+        recommendations.forEach((plot, index) => {
+            console.log(plot)
+            if (index < 5) {  // Adjust the number of charts displayed
+
+                const xKey = plot.type[0];
+                const yKey = plot.type[1];
+                const xData = chartData.data.map(item => item[xKey]);
+                const yData = chartData.data.map(item => item[yKey]);
+
+                console.log(`Chart ${index + 1} - ${xKey} vs ${yKey}`);
+                console.log('X Data:', xData);
+                console.log('Y Data:', yData);
+                createChart(`chart${index + 1}`, {
+                    title: `${plot.type[1]} by ${plot.type[0]}`,
+                    xKey: plot.type[0],
+                    yKey: plot.type[1],
+                    chartTypes: plot.kind
+                });
+            }
+        });
     </script>
+
 </body>
 
 </html>

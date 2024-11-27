@@ -1,12 +1,12 @@
-from fastapi import APIRouter, UploadFile, HTTPException,Form
-from services.upload_on import upload_file_to_onedrive,get_access_token
+from fastapi import APIRouter, UploadFile, HTTPException,Form,Request
+from services.upload_on import upload_file_to_onedrive,get_access_token,upload_bytes_to_onedrive
 from routes.schedular import insert_report_schedule,insert_data_report_schedule
 from models.ReportSchedule import ReportSchedule
 from fastapi import FastAPI, Form, File, UploadFile
 from db_connection import connection
 from typing import Optional
 from pydantic import BaseModel
-from services.exportService import generatePdf
+from services.exportService import dashboard_pdf
 router = APIRouter()
 
 class User(BaseModel):
@@ -82,7 +82,9 @@ async def login(request: LoginRequest):
 
 
 @router.post("/insert-schedule/")
-async def insert_schedule( start_date: str= Form(...),
+async def insert_schedule( 
+    request: Request,
+    start_date: str= Form(...),
     end_date:  str= Form(...),
     time: str= Form(...),
     report_format:  str= Form(...),
@@ -102,13 +104,16 @@ async def insert_schedule( start_date: str= Form(...),
     moduleName: str= Form(...)):
     try:
             
-            file= generatePdf()
+            # file= dashboard_pdf()
+            file = dashboard_pdf(request)
+            print("file",file)
             access_token = get_access_token()
+            file_name = "dashboard_report.pdf"
             if not access_token:
                 raise HTTPException(status_code=500, detail="Access token could not be retrieved")
             download_url = None
             if file:
-                download_url =  upload_file_to_onedrive(access_token, file)
+                download_url =  upload_bytes_to_onedrive(access_token, file_name , file)
 
             if not download_url:
                 raise HTTPException(status_code=500, detail="Failed to upload file")
@@ -117,7 +122,7 @@ async def insert_schedule( start_date: str= Form(...),
                  file=download_url
             # Call the actual function to insert the schedule
             file_link = download_url if download_url else None
-
+            print(file_link,"file_link")
             result = insert_report_schedule(
                 start_date,
                 end_date,

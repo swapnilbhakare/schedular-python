@@ -17,7 +17,7 @@ app = FastAPI()
 from routes.schedular import run_scheduler_forever
 app.include_router(router)
 
-
+from services.exportService import dashboard_pdf
 templates = Jinja2Templates(directory="templates")
 
 
@@ -27,6 +27,8 @@ async def dashboard(request: Request):
     with open('descriptive_dashboard_output.json') as f:
         data = json.load(f)
     
+    pdf_content = dashboard_pdf(request)
+    print(pdf_content)
     # Render the HTML template with data
     return templates.TemplateResponse("chart.html", {"request": request, "data": data})
 
