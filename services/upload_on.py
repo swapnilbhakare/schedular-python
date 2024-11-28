@@ -6,6 +6,7 @@ import logging
 from config import Config
 import httpx
 import requests
+from io import BytesIO
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -50,24 +51,23 @@ def get_access_token() -> Optional[str]:
         return None
 
 
-
-def upload_bytes_to_onedrive(access_token: str, file_name: str, file_bytes: bytes) -> Optional[str]:
-    """Upload a file in bytes to OneDrive and return the download URL."""
+def upload_bytes_to_onedrive(access_token: str, file_name: str, file_bytes: BytesIO) -> Optional[str]:
     try:
         url = f'https://graph.microsoft.com/v1.0/me/drive/root:/{file_name}:/content'
         headers = {
             'Authorization': f'Bearer {access_token}',
-            'Content-Type': 'application/octet-stream'
+            'Content-Type': 'application/pdf'
         }
+        # Reset the buffer position to the beginning
+        file_bytes.seek(0)  # Ensure correct reading
         
         response = requests.put(url, headers=headers, data=file_bytes)
         response.raise_for_status()
         
-        # Get the download URL from the response
         return response.json().get('@microsoft.graph.downloadUrl')
-    
     except requests.RequestException as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload file to OneDrive: {str(e)}")
+
 
 def upload_file_to_onedrive(access_token: str, file: UploadFile) -> Optional[str]:
     """Upload the file to OneDrive and return the download URL."""

@@ -7,6 +7,7 @@ from db_connection import connection
 from typing import Optional
 from pydantic import BaseModel
 from services.exportService import dashboard_pdf
+import io
 router = APIRouter()
 
 class User(BaseModel):
@@ -103,23 +104,22 @@ async def insert_schedule(
     reportType: str= Form(...),
     moduleName: str= Form(...)):
     try:
-            
+            print('before pdf')
             # file= dashboard_pdf()
-            file = dashboard_pdf(request)
-            print("file",file)
+            pdf_file = await  dashboard_pdf(request)
+            print('after pdf')
+
             access_token = get_access_token()
             file_name = "dashboard_report.pdf"
             if not access_token:
                 raise HTTPException(status_code=500, detail="Access token could not be retrieved")
             download_url = None
-            if file:
-                download_url =  upload_bytes_to_onedrive(access_token, file_name , file)
+            
+            download_url = upload_bytes_to_onedrive(access_token, file_name, pdf_file)
 
             if not download_url:
                 raise HTTPException(status_code=500, detail="Failed to upload file")
-            # Return the download URL as the response
-            if file:
-                 file=download_url
+        
             # Call the actual function to insert the schedule
             file_link = download_url if download_url else None
             print(file_link,"file_link")
@@ -139,7 +139,7 @@ async def insert_schedule(
                 once,
                 once_every,
                 time_zone,
-                Link=file_link,
+                Link=download_url,
                 reportType=reportType,
                 ModuleName=moduleName,
             )

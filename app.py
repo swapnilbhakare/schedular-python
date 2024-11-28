@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse,FileResponse
 # from weasyprint import HTML
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 from routes.schedular import run_scheduler_forever
@@ -19,6 +20,7 @@ app.include_router(router)
 
 from services.exportService import dashboard_pdf
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/dashboard", response_class=HTMLResponse)

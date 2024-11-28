@@ -28,4 +28,4 @@ archive.zip
 
 # macOS
 .DS_Store
-.config.py
+config.py
