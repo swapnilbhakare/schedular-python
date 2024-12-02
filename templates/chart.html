@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard with ECharts</title>
-
+    <script src="https://kit.fontawesome.com/0375fd65ad.js" crossorigin="anonymous"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ECharts CDN -->
@@ -13,78 +13,414 @@
 
     <style>
         .chart-container {
-            width: 100%;
+            width: 300px;
             height: 300px;
             max-width: 100%;
-            page-break-inside: avoid;
-
-            /* Ensures it stays within its parent container */
+            background-color: #fff;
+            /* White background for a clean look */
+            border-radius: 8px;
+            /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Light shadow for depth */
+            padding: 20px;
+            /* Padding inside each chart */
         }
 
         .card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 16px;
+            background-color: #fff;
+            border-radius: 16px;
+            /* Rounded corners for the whole card */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            /* Stronger shadow for depth */
+            padding: 20px;
             text-align: center;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            /* Smooth transition for hover effects */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            /* Hover effect to lift the card */
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+            /* Stronger shadow on hover */
         }
 
         .card-title {
-            color: #4b5563;
+            font-size: 1.2rem;
+            color: #00796b;
+            /* Teal color for the title */
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #00796b;
+            margin-bottom: 10px;
+        }
+
+        /* For the overall container to give it spacing */
+        .container {
+            margin-top: 20px;
+        }
+
+        @media print {
+            @page {
+                size: "16:9";
+                margin: 0;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+
+
+        .glow-gradient {
+
+            background: 0 0 60px rgba(255, 211, 41, 0.8), 0 0 100px rgba(255, 136, 0, 0.6), 0 0 140px rgba(255, 0, 0, 0.4);
+            box-shadow: 0 0 10px rgba(255, 211, 41, 0.8), 0 0 20px rgba(255, 136, 0, 0.6), 0 0 20px rgba(255, 0, 0, 0.4);
+
+        }
+
+        .main-container {
+            width: 1920px;
+            /* 508mm in pixels */
+            height: 1080px;
+            /* 286mm in pixels */
+            background-color: #f5f5f5;
+            /* Light gray background for demo */
+            margin: 10px auto;
+            /* Center alignment with some spacing */
+            border: 2px solid #ccc;
+            /* Optional border for visibility */
+            border-radius: 8px;
+            /* Rounded corners */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow */
+            overflow: hidden;
+            /* Ensure content stays within bounds */
         }
     </style>
 </head>
 
 <body class="bg-[#006064] text-gray-900">
 
-    <!-- Header -->
-    <div class="container mx-auto mt-10 px-4 text-center">
-        <h1 class="text-3xl font-bold text-teal-700 mb-8">Dashboard</h1>
-    </div>
+    <div
+        class="w-[1920px] h-[1080px] mx-auto rounded-lg p-8 flex flex-col justify-center items-center text-white relative">
+        <!-- Top Net Image -->
+        <div class="absolute top-10 left-0 w-full h-[20%]">
+            <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732798695/jkdoeiqizhem5bgncial.png"
+                class=" h-full object-cover" />
+        </div>
 
-    <!-- Statistic Boxes -->
-    <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-10">
-            {% for key, value in data.final_clean_card.items() %}
-            <div class="card p-6">
-                <h2 class="text-xl font-semibold text-teal-600 mb-2">{{ key.replace('_', ' ').title() }}</h2>
-                <p class="text-2xl font-bold text-gray-700">{{ value }}</p>
+        <!-- Content Section (Middle) -->
+        <div class="w-full flex flex-col justify-center items-center relative z-10 pt-[10%] pb-[10%]">
+            <div class="flex justify-around items-center w-full">
+                <!-- Left Content: Logo and Title -->
+                <div class="flex flex-col items-start justify-center text-left">
+                    <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732793884/qbynz8czoipi5r5fdcsq.png"
+                        alt="AI Logo" class="rounded-lg w-[120px] h-[120px] mb-4">
+                    <h1 class="text-7xl font-bold text-left">Decision Pulse AI: Sales </h1>
+                    <h1 class="text-7xl font-bold text-left"> Insights Report</h1>
+
+                    <p class="text-2xl mt-2">Empowering Data-Driven Decision-Making</p>
+                    <div class="mt-4 bg-[#00ACC1] p-4 rounded-md w-[400px]">
+                        <p class="text-2xl">Office Solution</p>
+                        <p class="text-2xl">29/11/2024</p>
+                    </div>
+                    <p class="mt-8 text-left text-lg w-full">
+                        <a href="https://www.innovationatofficesolution.com"
+                            class="underline">www.innovationatofficesolution.com</a>
+                    </p>
+                </div>
+
+                <!-- Right Content: Image -->
+                <div
+                    class="ml-auto glow-gradient bg-[#D9D9D9] w-[510px] h-[510px] rounded-md relative flex items-end justify-end">
+                    <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732793618/l90pyksmjrstcsn6th9p.png"
+                        alt="AI Image" class="rounded-md w-[500px] h-[500px]">
+                </div>
             </div>
-            {% endfor %}
+        </div>
+
+        <!-- Bottom Net Image -->
+        <div class="absolute bottom-0 left-0 w-full h-[20%]">
+            <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732798695/jkdoeiqizhem5bgncial.png"
+                class="h-full object-contain" />
         </div>
     </div>
 
-    <!-- Charts Section -->
-    <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <div class="w-[1920px] h-[1080px] mx-auto flex items-center justify-center page-break relative">
+        <!-- Outer container for left (AI) and right (Content) sections -->
+        <div class="flex items-center justify-between w-full max-w-7xl">
+            <!-- Left Section (AI Icon) -->
+            <div class="absolute top-0 left-0 h-full w-[500px] flex items-center justify-center">
+                <!-- AI Image -->
+                <div class="w-[500px] h-[500px] bg-[#00ACC1] rounded-full flex items-center justify-center">
+                    <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732793617/chpydw8u4z3vcgea4la1.png"
+                        alt="AI Image" class="w-full h-full object-cover">
+                </div>
+            </div>
+
+            <!-- Right Section (Table of Contents) -->
+            <div class="flex-1 p-8 ml-8 flex flex-col justify-center items-center text-center">
+                <!-- Table of Contents -->
+                <div class="mb-8">
+                    <h1 class="text-7xl font-bold  text-white text-left space-y-2">
+                        Table of
+                    </h1>
+                    <h1 class="text-7xl font-bold  text-white text-left space-y-2">Contents</h1>
+
+                    <ul class="space-y-4 text-left text-white text-4xl mt-8 mb-8">
+                        <!-- <li>• <span class="font-medium">Executive Summary</span></li> -->
+                        <li>• <span class="font-medium">Descriptive Analysis</span></li>
+                        <li>• <span class="font-medium">Diagnostic Analysis</span></li>
+                        <li>• <span class="font-medium">Predictive Analysis</span></li>
+                        <li>• <span class="font-medium">Prescriptive Insights Key</span></li>
+                        <li>• <span class="font-medium">Recommendations</span></li>
+                    </ul>
+
+                </div>
+
+                <!-- Footer -->
+                <div
+                    class="absolute w-[200px] bottom-0 mt-[250px] mx-auto text-2xl bg-[#00ACC1] text-white p-3 rounded-lg text-center w-[70%]">
+                    <a href="https://www.innovationalofficesolution.com" class="">
+                        www.innovationalofficesolution.com
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logo Image at Top Left Corner of the Page -->
+        <div class="absolute top-0 left-0 p-4 ">
+            <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732793884/qbynz8czoipi5r5fdcsq.png" alt="Logo"
+                class="w-50 h-50">
+        </div>
+    </div>
+
+    <div
+        class="w-[1920px] h-[1080px] mx-auto rounded-lg p-8 flex flex-col justify-center items-center page-break relative">
+        <h1 class="text-4xl font-bold text-white mb-8">Alert Points</h1>
+        <div class="bg-[#004d4d] p-8 rounded-lg shadow-lg w-[70%]">
+            <h2 class="text-3xl font-semibold text-white text-center mb-6">Insights to Focus On</h2>
+            <ul class="text-xl space-y-4 list-disc list-inside">
+                {% if data.anomaly_detection.Anomalies %}
+                {% for anomaly in data.anomaly_detection.Anomalies %}
+                <li class="{% if loop.index is odd %}text-yellow-500{% else %}text-white{% endif %}">
+                    <i class="fa-solid fa-circle-right mr-2"></i>
+                    {{ anomaly }}
+                </li>
+                {% endfor %}
+                {% else %}
+                <p class="text-gray-500 text-center">No anomalies detected.</p>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="absolute top-0 left-0 p-4">
+            <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732793884/qbynz8czoipi5r5fdcsq.png" alt="Logo"
+                class="w-30 h-30">
+        </div>
+    </div>
+
+
+    <div
+        class="w-full  max-w-[1920px] h-auto mx-auto rounded-lg  p-8 flex flex-col justify-center items-center page-break relative">
+        <h1 class="text-3xl font-bold text-white mb-8">Descriptive Analysis</h1>
+
+        <div class="grid mt-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
+            {% for key, value in data.descriptive_dashboard_output.final_clean_card.items() %}
+            <div class="bg-white rounded-lg shadow-md p-2 flex flex-col items-center text-center">
+                <h2 class="text-xl font-semibold text-[#006064] mb-2">
+                    {{ key.replace('_', ' ').title() }}
+                </h2>
+                <p class="text-2xl font-bold text-[#006064]">{{ value }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 w-full mt-5">
             {% for index in range(5) %}
-            <div class="card">
-                <h2 class="text-xl font-semibold card-title mb-4">{{ data.plot_recommendation.plot[index].title }}</h2>
-                <!-- ECharts container inside the card -->
-                <div id="chart{{ index + 1 }}" class="chart-container"></div>
+            <div class="bg-white rounded-lg shadow-md p-3 flex flex-col items-center justify-center">
+                <h2 class="text-lg font-semibold text-[#006064] mb-2">
+                    {{ data.descriptive_dashboard_output.plot_recommendation.plot[index].title }}
+                </h2>
+                <div id="chart{{ index + 1 }}" class="w-full max-w-[500px] h-[300px]"></div>
             </div>
             {% endfor %}
         </div>
+
+        <div class="absolute top-[-5px] left-0 p-0  "> <img
+                src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732793884/qbynz8czoipi5r5fdcsq.png" alt="Logo"
+                class="w-30 h-30">
+        </div>
     </div>
+
+
+
+
+
+
+    <div
+        class="w-[1920px] h-[1080px] mx-auto rounded-lg p-8 flex flex-col justify-center items-center page-break relative">
+        <h1 class="text-4xl font-bold text-white mb-8">Diagnostic Analysis</h1>
+        <div class="bg-[#004d4d] p-8 rounded-lg shadow-lg w-[70%]">
+            <h2 class="text-3xl font-semibold text-white text-center mb-6">Your Data Insights</h2>
+            <ul class="text-xl space-y-4 list-disc list-inside">
+                {% if data.diagnostic_analysis.our_data %}
+                {% for our_insights in data.diagnostic_analysis.our_data %}
+                <li class="text-white ">
+                    <i class="fa-solid fa-circle-right mr-2"></i>
+                    {{ our_insights }}
+                </li>
+                {% endfor %}
+                {% else %}
+                <p class="text-gray-500">No anomalies detected.</p>
+                {% endif %}
+            </ul>
+
+        </div>
+        <div class="absolute top-0 left-0 p-4 ">
+            <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732793884/qbynz8czoipi5r5fdcsq.png" alt="Logo"
+                class="w-50 h-50">
+        </div>
+    </div>
+
+
+
+    <div
+        class="w-[1920px] h-[1080px] mx-auto rounded-lg p-8 flex flex-col justify-center items-center page-break relative">
+        <h1 class="text-4xl font-bold text-white mb-8">Prescriptive Insights</h1>
+        <div class="bg-[#004d4d] p-8 rounded-lg shadow-lg w-[70%]">
+            <h2 class="text-3xl font-semibold text-white text-center mb-6">Your Prescriptive Insights</h2>
+            <ul class="text-xl space-y-4 list-disc list-inside">
+                {% if data.prescriptive_analysis.prescriptive_data %}
+                {% for prescriptive in data.prescriptive_analysis.prescriptive_data %}
+                <li class="text-white ">
+                    <i class="fa-solid fa-circle-right mr-2"></i>
+                    {{ prescriptive }}
+                </li>
+                {% endfor %}
+                {% else %}
+                <p class="text-gray-500">No anomalies detected.</p>
+                {% endif %}
+            </ul>
+
+        </div>
+        <div class="absolute top-0 left-0 p-4 ">
+            <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732793884/qbynz8czoipi5r5fdcsq.png" alt="Logo"
+                class="w-50 h-50">
+        </div>
+    </div>
+
+
+    <div
+        class="w-full max-w-[1920px] h-auto mx-auto rounded-lg p-8 flex flex-col justify-center items-center page-break relative">
+        <h1 class="text-3xl font-bold text-white mb-8">Predictive Analysis</h1>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 w-full mt-10">
+            {% for index in range(5) %}
+            <div class="bg-white rounded-lg shadow-md p-3 flex flex-col items-center justify-center">
+                <h2 class="text-lg font-semibold text-[#006064] mb-2">
+                    {{ data.predictive_dashboard_output.plot[index].title }}
+                </h2>
+                <div id="pre_chart{{ index + 1 }}" class="w-full max-w-[500px] h-[300px]"></div>
+                <!-- Make sure the IDs match -->
+            </div>
+            {% endfor %}
+        </div>
+        <div class="absolute top-0 left-0 p-4">
+            <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732793884/qbynz8czoipi5r5fdcsq.png" alt="Logo"
+                class="w-30 h-30">
+        </div>
+    </div>
+
+
+    <div
+        class="w-[508mm] h-[286mm] mx-auto rounded-lg p-8 flex flex-col justify-between items-center text-white relative page-break">
+        <!-- Top Net Image -->
+        <div class="w-full h-[20%]">
+            <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732798695/jkdoeiqizhem5bgncial.png"
+                class="h-full object-cover" />
+        </div>
+
+        <!-- Content Section (Middle) -->
+        <div class="flex flex-col justify-center items-center w-full h-[60%] pt-8 pb-8">
+            <div class="flex justify-around items-center w-full">
+                <!-- Left Content: Logo and Title -->
+                <div class="flex flex-col items-start justify-center text-left">
+                    <h1 class="text-5xl font-bold text-left">Thank You for Decision Pulse Ai</h1>
+                    <h1 class="text-5xl font-bold text-left">Choosing</h1>
+                    <h1 class="text-5xl font-bold text-left">Decision Pulse Ai</h1>
+                    <p class="text-xl mt-2">Empowering Your Decisions with <br> Strategic Data Insights</p>
+                    <div class="mt-4 bg-white p-2 rounded-md w-[350px]">
+                        <p class="flex justify-around items-center">
+                            <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732793884/qbynz8czoipi5r5fdcsq.png"
+                                alt="AI Logo" class="rounded-lg w-[50px] h-[50px]">
+                            <a href="https://www.innovationatofficesolution.com"
+                                class="text-[#006064] text-md">www.innovationatofficesolution.com</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Content: Image -->
+                <div class="ml-auto w-[510px] h-[800px] rounded-md relative flex items-end justify-end">
+                    <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732879640/qskna3qzyto8e844zqbc.png"
+                        alt="AI Image" class="rounded-md w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Net Image -->
+        <div class="w-full h-[20%]">
+            <img src="https://res.cloudinary.com/dsxewfk25/image/upload/v1732798695/jkdoeiqizhem5bgncial.png"
+                class="h-full object-contain" />
+        </div>
+    </div>
+
 
     <script>
-        const chartData = {{ data | tojson | safe }};
-        const recommendations = chartData.plot_recommendation.plot;
+        window.onload = function () {
+            const chartData = {{ data | tojson | safe
+        }};
+        const descriptiveData = chartData.descriptive_dashboard_output;
+        const predictiveData = chartData.predictive_dashboard_output;
 
-        // Create the chart
-        function createChart(chartId, plotConfig) {
+        console.log("Combined Data:", chartData);
+
+        // Descriptive Dashboard Recommendations
+        const descriptiveRecommendations = descriptiveData?.plot_recommendation?.plot;
+
+        // Predictive Dashboard Recommendations
+        const predictiveRecommendations = predictiveData?.plot;
+
+        // Create the chart function
+        function createChart(chartId, plotConfig, dataSource) {
+            console.log(dataSource);
+
             const chart = echarts.init(document.getElementById(chartId));
 
             // Extract xData and yData
-            const xData = chartData.data.map(item => item[plotConfig.xKey]);
-            const yData = chartData.data.map(item => item[plotConfig.yKey]);
+            const xData = dataSource.map(item => item[plotConfig.xKey]);
+            const yData = dataSource.map(item => item[plotConfig.yKey]);
+
+            // Group data by x values and aggregate y values (sum, average, etc.)
+            const groupedData = groupBy(xData, yData);
 
             // Sort data and get top 5 values
-            const combinedData = xData.map((x, index) => ({ x, y: yData[index] }));
-            const topData = combinedData.sort((a, b) => b.y - a.y).slice(0, 5);
+            const sortedData = Object.entries(groupedData)
+                .map(([x, y]) => ({ x, y }))
+                .sort((a, b) => b.y - a.y)
+                .slice(0, 5);
 
-            const topXData = topData.map(item => item.x);
-            const topYData = topData.map(item => item.y);
+            const topXData = sortedData.map(item => item.x);
+            const topYData = sortedData.map(item => item.y);
 
             const option = {
                 title: { text: plotConfig.title, textStyle: { color: '#333', fontSize: 16 } },
@@ -97,7 +433,13 @@
                 },
                 yAxis: {
                     type: 'value',
-                    axisLabel: { color: '#555' },
+                    axisLabel: {
+                        color: '#555',
+                        formatter: function (value) {
+                            // Format the y-axis labels (1k, 1M, 1B)
+                            return formatNumber(value);
+                        }
+                    },
                     axisLine: { lineStyle: { color: '#ccc' } }
                 },
                 series: [{
@@ -111,19 +453,61 @@
             chart.setOption(option);
         }
 
-        if (recommendations && recommendations.length > 0) {
-            recommendations.forEach((plot, index) => {
+        // Helper function to group data by X values and aggregate Y values
+        function groupBy(xData, yData) {
+            return xData.reduce((acc, x, index) => {
+                if (!acc[x]) {
+                    acc[x] = 0;
+                }
+                acc[x] += yData[index];  // You can change this aggregation to suit your needs (sum, average, etc.)
+                return acc;
+            }, {});
+        }
+
+        // Handle Descriptive Dashboard Charts
+        if (descriptiveRecommendations && descriptiveRecommendations.length > 0) {
+            descriptiveRecommendations.forEach((plot, index) => {
                 if (index < 5 && plot.type && plot.type.length >= 2) {
                     createChart(`chart${index + 1}`, {
                         title: `${plot.type[1]} by ${plot.type[0]}`,
                         xKey: plot.type[0],
                         yKey: plot.type[1],
                         chartTypes: plot.kind
-                    });
+                    }, descriptiveData.data);
                 }
             });
         }
+
+        // Handle Predictive Dashboard Charts
+        if (predictiveRecommendations && predictiveRecommendations.length > 0) {
+            predictiveRecommendations.forEach((plot, index) => {
+                // Check if plot.kind contains any of the chart types (bar, line, or area)
+                if (index < 5 && plot.type && plot.type.length >= 2 && (plot.kind.includes("bar") || plot.kind.includes("line") || plot.kind.includes("area"))) {
+                    createChart(`pre_chart${index + 1}`, {  // Ensure matching IDs for predictive charts
+                        title: `${plot.type[1]} by ${plot.type[0]}`,  // Updated to show correct types
+                        xKey: plot.type[0],
+                        yKey: plot.type[1],
+                        chartTypes: ['line']
+                    }, predictiveData.data);
+                }
+            });
+        }
+
+        // Function to format large numbers
+        function formatNumber(num) {
+            if (num >= 1e9) {
+                return (num / 1e9).toFixed(1) + 'B';  // Format as billions
+            } else if (num >= 1e6) {
+                return (num / 1e6).toFixed(1) + 'M';  // Format as millions
+            } else if (num >= 1e3) {
+                return (num / 1e3).toFixed(1) + 'K';  // Format as thousands
+            } else {
+                return num;  // No formatting needed for smaller numbers
+            }
+        }
+        };
     </script>
+
 
 </body>
 

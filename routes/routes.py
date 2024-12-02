@@ -107,7 +107,7 @@ async def insert_schedule(
             print('before pdf')
             # file= dashboard_pdf()
             pdf_file = await  dashboard_pdf(request)
-            print('after pdf')
+            # print(pdf_file)
 
             access_token = get_access_token()
             file_name = "dashboard_report.pdf"
@@ -116,34 +116,34 @@ async def insert_schedule(
             download_url = None
             
             download_url = upload_bytes_to_onedrive(access_token, file_name, pdf_file)
-
+            print(download_url)
             if not download_url:
                 raise HTTPException(status_code=500, detail="Failed to upload file")
         
             # Call the actual function to insert the schedule
             file_link = download_url if download_url else None
-            print(file_link,"file_link")
-            result = insert_report_schedule(
-                start_date,
-                end_date,
-                time,
-                report_format,
-                ToEmailId,
-                email_subject,
-                email_body,
-                created_by,
-                username,
-                once_daily,
-                once_weekly,
-                once_monthly,
-                once,
-                once_every,
-                time_zone,
-                Link=download_url,
-                reportType=reportType,
-                ModuleName=moduleName,
-            )
-            return {"status": "success", "message": "Report schedule inserted successfully","result":result}
+            # print(file_link,"filste_link")
+            # result = insert_report_schedule(
+            #     start_date,
+            #     end_date,
+            #     time,
+            #     report_format,
+            #     ToEmailId,
+            #     email_subject,
+            #     email_body,
+            #     created_by,
+            #     username,
+            #     once_daily,
+            #     once_weekly,
+            #     once_monthly,
+            #     once,
+            #     once_every,
+            #     time_zone,
+            #     Link=download_url,
+            #     reportType=reportType,
+            #     ModuleName=moduleName,
+            # )
+            return {"status": "success", "message": "Report schedule inserted successfully",}
     except Exception as e:
 
         raise HTTPException(status_code=500, detail=str(e))
